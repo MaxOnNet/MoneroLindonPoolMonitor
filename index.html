@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Monero Lindon Pool Monitor</title>
+	<meta charset="utf8">
+	<meta content="initial-scale=1, maximum-scale=1, user-scalable=yes" name="viewport">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+	<link href="https://bootstrap-themes.github.io/application/assets/css/toolkit.css" rel="stylesheet">
+	<link href="https://bootstrap-themes.github.io/application/assets/css/application.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<div class="row justify-content-center" style="margin: 0;">
+			<div class="col-11 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+				<div class="card text-center" style="margin: 15px 0;">
+					<h6 class="card-header">Сеть</h6>
+					<ul id="network" class="list-group list-group-flush text-left">
+						<li class="list-group-item"><b>Сложность:</b> 0</li>
+						<li class="list-group-item"><b>Хеш:</b> 0</li>
+						<li class="list-group-item"><b>Высота:</b> 0</li>
+						<li class="list-group-item"><b>Время последнего блока:</b> 0</li>
+						<li class="list-group-item"><b>Награда за блок:</b> 0 XMR</li>
+					</ul>
+				</div>
+				<div class="card text-center" style="margin: 15px 0;">
+					<h6 class="card-header">Пул</h6>
+					<ul id="pool" class="list-group list-group-flush text-left">
+						<li class="list-group-item"><b>Хешрейт:</b> 0.00 KH/s</li>
+						<li class="list-group-item"><b>Принято хешей:</b> 0.00 TH</li>
+						<li class="list-group-item"><b>Хешей в текущем блоке:</b> 0 GH</li>
+						<li class="list-group-item"><b>Время последнего блока:</b> 0</li>
+						<li class="list-group-item"><b>Найдено блоков:</b> 0</li>
+						<li class="list-group-item"><b>Майнеры:</b> 0</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-11 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+				<div class="card text-center" style="margin: 15px 0;">
+					<h6 class="card-header">Добыча</h6>
+					<ul id="mining" class="list-group list-group-flush text-left">
+						<li class="list-group-item"><b>Текущий effort:</b> 0%</li>
+						<li class="list-group-item"><b>Хешрейт:</b> 0.00 H/s</li>
+						<li class="list-group-item"><b>Всего хешей:</b> 0.00 MH/s</li>
+						<li class="list-group-item"><b>Валидных шаров:</b> 0</li>
+						<li class="list-group-item"><b>Битых шаров:</b> 0</li>
+					</ul>
+				</div>
+				<div class="card text-center" style="margin: 15px 0;">
+					<h6 class="card-header">Кошелек</h6>
+					<ul id="balance" class="list-group list-group-flush text-left">
+						<li class="list-group-item"><b>Баланс:</b> 0 XMR</li>
+						<li class="list-group-item"><b>Выплачено:</b> 0 XMR (0 USD / 0 RUB)</li>
+						<li class="list-group-item"><b>Адрес кошелька:</b> 0</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			// введите свой адрес кошелька, за которым вы следите
+			var walletAddress = "42vjMbvYAL4Dt35QnTEnZRC39K7xGQZTp3yj5GVmUJHX3oWQqnGb7eEWzpPDc2E7gaJFbrpqnQqTBYLxWBdBTviKBnxm5Zo";
+			// переменные, которые хранят все данные
+			var getMinerStats = "https://monero.lindon-pool.win/api/miner/" + walletAddress + "/stats", // генерирует url для запроса данных о майнере
+				networkDifficulty, // сложность сети
+				networkHash, // хеш сети
+				networkHeight, // высота
+				networkLastBlockFoundTime, // когда сетью был найден последний блок
+				reward, // награда за нахождение блока
+				poolHashrate, // хешрейт пула
+				poolTotalHashes, // сколько пул получил хешей от майнеров
+				poolRoundHashes, // сколько нужно хешей для нахождения блока
+				poolLastBlockFound, // когда пулом был найден последний блок
+				poolTotalBlocksFound, // сколько блоков нашел пул
+				poolMiners, // сколько майнеров на пуле
+				currentEffort, // текущий effort
+				minerHashrate, // хешрейт майнера, за которым следите
+				minerTotalHashes, // сколько хешей отправил майнер
+				minerUnpaid, // сколько невыплачено майнеру
+				minerPaid, // сколько выплачено майнеру
+				minerCoins, // сколько всего добыто
+				toUSD, // курс Monero к USD
+				toRUB; // курс Monero к Рублю
+			// функция, переводящая время формата unix-timestamp в нормальное
+			function timeConverter(UNIX_timestamp) {
+				var a = new Date(UNIX_timestamp * 1000),
+					months = ['01','02','03','04','05','06','07','08','09','10','11','12'],
+					year = a.getFullYear(),
+					month = months[a.getMonth()],
+					date = a.getDate(),
+					hour = a.getHours(),
+					min = a.getMinutes(),
+					sec = a.getSeconds(),
+					time = date+'.'+month+'.'+year+', '+hour+':'+min+':'+sec;
+				return time;
+			};
+			// функция собирает и выводит всю статистику
+			function getStats() {
+				// запрос к api на получение и вывод статистики о сети
+				$.getJSON("https://monero.lindon-pool.win/api/network/stats", function(network) {
+					networkDifficulty = network.difficulty;
+					networkHash = network.hash;
+					networkHeight = network.height;
+					networkLastBlockFound = timeConverter(network.ts);
+					reward = network.value/1000000000000;
+					var network = `
+						<li class="list-group-item"><b>Сложность:</b> ${networkDifficulty}</li>
+						<li class="list-group-item"><b>Хеш:</b> <a href="https://xmrchain.net/block/${networkHash}" target="_blank">${networkHash}</a></li>
+						<li class="list-group-item"><b>Высота:</b> ${networkHeight}</li>
+						<li class="list-group-item"><b>Время последнего блока:</b> ${networkLastBlockFound}</li>
+						<li class="list-group-item"><b>Награда за блок:</b> ${reward.toFixed(5)} XMR</li>
+					`;
+					$("#network").html(network);
+				});
+				// запрос к api на получение и вывод статистики о пуле
+				$.getJSON("https://monero.lindon-pool.win/api/pool/stats", function(pool) {
+					poolHashrate = pool.pool_statistics.hashRate/1000;
+					poolTotalHashes = pool.pool_statistics.totalHashes/1000000000000;
+					poolRoundHashes = pool.pool_statistics.roundHashes/1000000000;
+					poolLastBlockFound = timeConverter(pool.pool_statistics.lastBlockFoundTime);
+					poolTotalBlocksFound = pool.pool_statistics.totalBlocksFound,
+					poolMiners = pool.pool_statistics.miners;
+					var pool = `
+						<li class="list-group-item"><b>Хешрейт:</b> ${poolHashrate.toFixed(2)} KH/s</li>
+						<li class="list-group-item"><b>Принято хешей:</b> ${poolTotalHashes.toFixed(2)} TH</li>
+						<li class="list-group-item"><b>Хешей в текущем блоке:</b> ${poolRoundHashes.toFixed(2)} GH</li>
+						<li class="list-group-item"><b>Время последнего блока:</b> ${poolLastBlockFound}</li>
+						<li class="list-group-item"><b>Найдено блоков:</b> ${poolTotalBlocksFound}</li>
+						<li class="list-group-item"><b>Майнеры:</b> ${poolMiners}</li>
+					`;
+					$("#pool").html(pool);
+				});
+				// запрос к api на получение и вывод статистики о майнере на пуле
+				$.getJSON(getMinerStats, function(api) {
+					minerHashrate = api.hash/1000;
+					minerTotalHashes = api.totalHashes/1000000;
+					minerUnpaid = api.amtDue/1000000000000;
+					minerPaid = api.amtPaid/1000000000000;
+					minerCoins = minerUnpaid+minerPaid;
+					currentEffort = poolRoundHashes/networkDifficulty*100000000000;
+					if (minerHashrate == undefined) {
+						minerHashrate = 0;
+					} else {
+						minerHashrate = api.hash/1000;
+					};
+					var mining = `
+						<li class="list-group-item"><b>Текущий effort:</b> ${currentEffort.toFixed(2)}%</li>
+						<li class="list-group-item"><b>Хешрейт:</b> ${minerHashrate.toFixed(2)} KH/s</li>
+						<li class="list-group-item"><b>Всего хешей:</b> ${minerTotalHashes.toFixed(2)} MH</li>
+						<li class="list-group-item"><b>Валидных шаров:</b> ${api.validShares}</li>
+						<li class="list-group-item"><b>Битых шаров:</b> ${api.invalidShares}</li>
+					`;
+					$("#mining").html(mining);
+					$.getJSON("https://api.cryptonator.com/api/ticker/xmr-btc", function(xmrBTC) {
+						toBTC = xmrBTC.ticker.price;
+						if (toBTC == undefined) {
+							toBTC = 0;
+						} else {
+							toBTC = xmrBTC.ticker.price;
+						};
+					});
+					$.getJSON("https://api.cryptonator.com/api/ticker/xmr-usd", function(xmrUSD) {
+						toUSD = xmrUSD.ticker.price * minerCoins;
+						if (toUSD == undefined) {
+							toUSD = 0;
+						} else {
+							toUSD = xmrUSD.ticker.price * minerCoins;
+						};
+					});
+					$.getJSON("https://api.cryptonator.com/api/ticker/xmr-rub", function(xmrRUB) {
+						toRUB = xmrRUB.ticker.price;
+						if (toRUB == undefined) {
+							toRUB = 0;
+						} else {
+							toRUB = xmrRUB.ticker.price * minerCoins;
+						};
+					});
+					var account = `
+						<li class="list-group-item"><b>Баланс:</b> ${minerUnpaid.toFixed(5)} XMR</li>
+						<li class="list-group-item"><b>Выплачено:</b> ${minerPaid.toFixed(5)} XMR</li>
+						<li class="list-group-item"><b>Всего:</b> ${minerCoins.toFixed(5)} XMR (${toUSD.toFixed(2)} USD / ${toRUB.toFixed(2)} RUB)</li>
+						<li class="list-group-item"><b>Адрес кошелька:</b> ${localStorage.getItem("setting_wallet")}</li>
+					`;
+					$("#balance").html(account);
+				});
+			};
+			// выполнение всех функций
+			getStats();
+			// авто-обновление статистики без перезагрузки страницы
+			setInterval(getStats, 3000);
+		});
+	</script>
+</body>
+</html>
