@@ -1,0 +1,39 @@
+html, body {
+	-webkit-app-region: no-drag;
+	overflow: hidden;
+}
+.navbar {
+	-webkit-app-region: drag;
+	-webkit-user-select: none;
+}
+.navbar-nav, #close {
+	-webkit-app-region: no-drag;
+}
+.wrapper {
+	margin: 48px 0;
+	max-height: 100vh;
+	overflow: auto;
+}
+a {
+	cursor: pointer;
+}
+.modal-dialog {
+	margin: 64px;
+	position: relative;
+	width: auto;
+}
+@media (min-width: 576px) {
+	.modal-dialog {
+		margin: 64px auto;
+		max-width: 500px;
+	}
+}
+@media (min-width: 576px) {
+	.modal-dialog {
+		margin: 64px auto;
+		max-width: 500px;
+	}
+}
+/* #close {
+	display: none;
+} */

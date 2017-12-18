@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Monero Lindon Pool Monitor</title>
+	<meta charset="utf8">
+	<meta content="initial-scale=1, maximum-scale=1, user-scalable=yes" name="viewport">
+	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+	<script src="assets/scripts/jquery.js"></script>
+	<script src="assets/scripts/popper.js"></script>
+	<script src="assets/scripts/bootstrap.js"></script>
+	<script src="assets/scripts/main.js"></script>
+	<script>if (window.module) module = window.module;</script>
+	<!--script src="https://code.jquery.com/jquery-3.2.0.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.js"></script>
+	<script src="assets/scripts/main.js"></script-->
+	<link href="assets/styles/fonts/opensans.css" rel="stylesheet">
+	<link href="assets/styles/bootstrap.min.css" rel="stylesheet">
+	<link href="assets/styles/theme.css" rel="stylesheet">
+	<link href="assets/styles/electron-presets.css" rel="stylesheet">
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
+		<a class="navbar-brand text-white">MLPMonitor</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" id="setWallet">Кошелек</a>
+				<a class="nav-item nav-link" href="https://github.com/sezoid/MoneroLindonPoolMonitor/" target="_blank">Исходный код</a>
+			</div>
+		</div>
+		<button type="button" id="close" class="close" aria-label="Закрыть" title="Закрыть">
+			<a href="javascript:window.close();" class="nav-item nav-link text-white">
+				<span aria-hidden="true">&times;</span>
+			</a>
+		</button>
+	</nav>
+	<div class="wrapper d-block">
+		<div class="container">
+			<div class="row justify-content-center" style="margin: 0;">
+				<div class="col-11 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+					<div class="card text-center" style="margin: 15px 0;">
+						<h6 class="card-header">Сеть</h6>
+						<ul id="network" class="list-group list-group-flush text-left">
+							<li class="list-group-item"><b>Сложность:</b> 0</li>
+							<li class="list-group-item"><b>Хеш:</b> 0</li>
+							<li class="list-group-item"><b>Высота:</b> 0</li>
+							<li class="list-group-item"><b>Время последнего блока:</b> 0</li>
+							<li class="list-group-item"><b>Награда за блок:</b> 0 XMR</li>
+						</ul>
+					</div>
+					<div class="card text-center" style="margin: 15px 0;">
+						<h6 class="card-header">Пул</h6>
+						<ul id="pool" class="list-group list-group-flush text-left">
+							<li class="list-group-item"><b>Хешрейт:</b> 0.00 KH/s</li>
+							<li class="list-group-item"><b>Принято хешей:</b> 0.00 TH</li>
+							<li class="list-group-item"><b>Хешей в текущем блоке:</b> 0 GH</li>
+							<li class="list-group-item"><b>Время последнего блока:</b> 0</li>
+							<li class="list-group-item"><b>Найдено блоков:</b> 0</li>
+							<li class="list-group-item"><b>Майнеры:</b> 0</li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-11 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+					<div class="card text-center" style="margin: 15px 0;">
+						<h6 class="card-header">Добыча</h6>
+						<ul id="mining" class="list-group list-group-flush text-left">
+							<li class="list-group-item"><b>Текущий effort:</b> 0%</li>
+							<li class="list-group-item"><b>Хешрейт:</b> 0.00 H/s</li>
+							<li class="list-group-item"><b>Всего хешей:</b> 0.00 MH/s</li>
+							<li class="list-group-item"><b>Валидные шары:</b> 0</li>
+							<li class="list-group-item"><b>Битые шары:</b> 0</li>
+						</ul>
+					</div>
+					<div class="card text-center" style="margin: 15px 0;">
+						<h6 class="card-header">Кошелек</h6>
+						<ul id="balance" class="list-group list-group-flush text-left">
+							<li class="list-group-item"><b>Баланс:</b> 0 XMR</li>
+							<li class="list-group-item"><b>Выплачено:</b> 0 XMR (0 USD / 0 RUB)</li>
+							<li class="list-group-item"><b>Всего:</b> 0 XMR (0 USD / 0 RUB)</li>
+							<li class="list-group-item"><b>Адрес кошелька:</b> 0</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div id="donation" class="alert alert-secondary" role="donation" style="margin: 15px 15px 60px 15px">
+				<p>Я сделал это приложение бесплатно для каждого, потому что захотел помочь. Ты так же можешь мне помочь, отблагодарив меня. Всё добровольно, даже если ты поставишь звездочку проекту на Github - это тоже крутая благодарность.</p>
+				<b>Bitcoin:</b> 1KUkLfiV2jPQhjtsVbM2N4EVPezvXgUGkW<br>
+				<b>E-Mail (для вопросов):</b> mynameis@romansultanov.ru
+			</div>
+		</div>
+	</div>
+	<div id="settings" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Кошелек</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="input-group">
+						<input type="text" id="wallet" class="form-control" placeholder="Введите адрес кошелька для отслеживания" aria-label="Введите адрес кошелька для отслеживания">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="save" type="button" class="btn btn-primary" data-dismiss="modal">Сохранить</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
