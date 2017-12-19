@@ -6,13 +6,13 @@
   "main": "./main.js",
   "scripts": {
     "start": "electron .",
-    "package": "electron-packager ./ mlpm --all --out build --version 0.30.2 --overwrite --icon=./app/img/app-icon.icns"
+    "build": "electron-packager . MoneroLindonPoolMonitor --all --version=1.7.10 --app-version=0.1.0 --no-prune --out=dist"
   },
   "devDependencies": {
-    "electron-packager": "^5.2.1",
-    "electron-prebuilt": "^0.30.8"
+    "electron-packager": "latest",
+    "electron-prebuilt": "latest"
   },
   "dependencies": {
-    "nconf": "^0.7.2"
+    "nconf": "latest"
   }
 }

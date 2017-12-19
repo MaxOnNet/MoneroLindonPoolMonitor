@@ -1,7 +1,18 @@
+// доступ к управлению окном
+const remote = require('electron').remote;
+
+// фикс открытия ссылок...
+var shell = require("electron").shell;
+$(document).on('click', 'a[href^="http"]', function(event) {
+	event.preventDefault();
+	shell.openExternal(this.href);
+});
+
 $(document).ready(function() {
 	// неведомая магия присвоения и получения кошелька
 	var getWallet = " ", // значение из поля ввода кошелька
 		walletAddress; // кошелек, за которым хотим следить
+	$("#wallet").val(localStorage.getItem("setting_wallet"));
 	$("#setWallet").click(function() {
 		$("#settings").modal("show");
 	});
@@ -141,5 +152,16 @@ $(document).ready(function() {
 		$("#wallet").val(walletAddress);
 		getMinerStats = "https://monero.lindon-pool.win/api/miner/" + localStorage.getItem("setting_wallet") + "/stats"
 		getStats();
+	});
+	// свернуть окно 
+	$("#minimize").click(function() {
+		// получаем текущее окно, которым будем управлять
+		var window = remote.getCurrentWindow();
+		window.minimize();  
+	});
+	// закрыть окно/приложение
+	$("#close").click(function() {
+		var window = remote.getCurrentWindow();
+		window.close();  
 	});
 });

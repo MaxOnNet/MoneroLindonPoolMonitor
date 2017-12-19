@@ -1,19 +1,39 @@
-'use strict';
+const electron = require('electron')
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
 
-var app = require('app');
-var BrowserWindow = require('browser-window');
-var mainWindow = null;
-app.on('ready', function() {
-	mainWindow = new BrowserWindow({
-		'frame': false,
-		'min-height': 646,
-		'min-width': 840,
-		'resizable': true
-	});
-	mainWindow.loadUrl('file://' + __dirname + '/app/index.html');
-	mainWindow.setMenu(null);
-});
+const path = require('path')
+const url = require('url')
+const shell = require('electron').shell
 
-app.on('close-main-window', function () {
-	app.quit();
-});
+let mainWindow
+
+function createWindow () {
+  mainWindow = new BrowserWindow({minWidth: 800, minHeight: 600, frame: false, resizable: true, fullscreenable: true})
+
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, '/app/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+
+  mainWindow.on('closed', function () {
+    mainWindow = null
+  })
+}
+
+app.on('ready', function () {
+	createWindow()
+})
+
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', function () {
+  if (mainWindow === null) {
+    createWindow()
+  }
+})

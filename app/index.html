@@ -10,10 +10,6 @@
 	<script src="assets/scripts/bootstrap.js"></script>
 	<script src="assets/scripts/main.js"></script>
 	<script>if (window.module) module = window.module;</script>
-	<!--script src="https://code.jquery.com/jquery-3.2.0.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.js"></script>
-	<script src="assets/scripts/main.js"></script-->
 	<link href="assets/styles/fonts/opensans.css" rel="stylesheet">
 	<link href="assets/styles/bootstrap.min.css" rel="stylesheet">
 	<link href="assets/styles/theme.css" rel="stylesheet">
@@ -21,18 +17,24 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand text-white">MLPMonitor</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<a class="navbar-brand text-white">Monero Lindon Pool Monitor</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Показать/скрыть навигацию">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 			<div class="navbar-nav">
 				<a class="nav-item nav-link" id="setWallet">Кошелек</a>
 				<a class="nav-item nav-link" href="https://github.com/sezoid/MoneroLindonPoolMonitor/" target="_blank">Исходный код</a>
+				<a class="nav-item nav-link" href="mailto:mynameis@romansultanov.ru">Поддержка</a>
 			</div>
 		</div>
+		<button type="button" id="minimize" class="close" aria-label="Свернуть" title="Свернуть">
+			<a href="#" class="nav-item nav-link text-white">
+				<span aria-hidden="true">–</span>
+			</a>
+		</button>
 		<button type="button" id="close" class="close" aria-label="Закрыть" title="Закрыть">
-			<a href="javascript:window.close();" class="nav-item nav-link text-white">
+			<a href="#" class="nav-item nav-link text-white">
 				<span aria-hidden="true">&times;</span>
 			</a>
 		</button>
@@ -85,10 +87,9 @@
 					</div>
 				</div>
 			</div>
-			<div id="donation" class="alert alert-secondary" role="donation" style="margin: 15px 15px 60px 15px">
-				<p>Я сделал это приложение бесплатно для каждого, потому что захотел помочь. Ты так же можешь мне помочь, отблагодарив меня. Всё добровольно, даже если ты поставишь звездочку проекту на Github - это тоже крутая благодарность.</p>
-				<b>Bitcoin:</b> 1KUkLfiV2jPQhjtsVbM2N4EVPezvXgUGkW<br>
-				<b>E-Mail (для вопросов):</b> mynameis@romansultanov.ru
+			<div id="donation" class="alert alert-secondary" role="donation" style="margin: 0 15px 15px 15px">
+				<p>Я сделал это приложение бесплатно для каждого, потому что захотел помочь. Ты так же можешь мне помочь, отблагодарив меня или помочь в дальнейшей разработке. Всё добровольно, даже если ты поставишь звездочку проекту на Github - это тоже помощь.</p>
+				<b>Bitcoin:</b> 1KUkLfiV2jPQhjtsVbM2N4EVPezvXgUGkW
 			</div>
 		</div>
 	</div>

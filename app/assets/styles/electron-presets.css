@@ -2,20 +2,25 @@ html, body {
 	-webkit-app-region: no-drag;
 	overflow: hidden;
 }
+a, button {
+	cursor: pointer;
+}
 .navbar {
 	-webkit-app-region: drag;
 	-webkit-user-select: none;
 }
-.navbar-nav, #close {
+.navbar-nav, #close, #minimize {
 	-webkit-app-region: no-drag;
+	-webkit-user-select: none;
 }
 .wrapper {
-	margin: 48px 0;
 	max-height: 100vh;
 	overflow: auto;
-}
-a {
-	cursor: pointer;
+	position: absolute;
+	top: 50px;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 .modal-dialog {
 	margin: 64px;
@@ -34,6 +39,7 @@ a {
 		max-width: 500px;
 	}
 }
-/* #close {
-	display: none;
-} */
+#close:hover, #minimize:hover {
+	background-color: #868e96;
+	border-radius: 4px;
+}
