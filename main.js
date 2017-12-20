@@ -87,7 +87,9 @@ function createWindow () {
 }
 
 app.on('ready', function () {
-	createMenu()
+	if (process.platform === 'darwin') {
+		createMenu()
+	}
 	createWindow()
 })
 
