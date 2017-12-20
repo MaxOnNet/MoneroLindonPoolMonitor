@@ -6,7 +6,7 @@
   "main": "./main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-packager . MoneroLindonPoolMonitor --all --version=1.7.10 --app-version=0.1.0 --no-prune --out=dist"
+    "build": "electron-packager . MoneroLindonPoolMonitor --mac --win --linux --version=1.7.10 --app-version=0.1.0 --no-prune --out=dist"
   },
   "devDependencies": {
     "electron-packager": "latest",
